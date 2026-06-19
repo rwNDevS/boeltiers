@@ -19,15 +19,33 @@ const publicDir = path.join(__dirname, 'public');
 app.use(express.static(publicDir));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(publicDir, 'index.html'));
+    const indexPath = path.join(publicDir, 'index.html');
+
+    if (!fs.existsSync(indexPath)) {
+        return res.status(404).send('No se encontró public/index.html en el servidor.');
+    }
+
+    res.sendFile(indexPath);
 });
 
 app.get('/index.html', (req, res) => {
-    res.sendFile(path.join(publicDir, 'index.html'));
+    const indexPath = path.join(publicDir, 'index.html');
+
+    if (!fs.existsSync(indexPath)) {
+        return res.status(404).send('No se encontró public/index.html en el servidor.');
+    }
+
+    res.sendFile(indexPath);
 });
 
 app.get('/admin.html', (req, res) => {
-    res.sendFile(path.join(publicDir, 'admin.html'));
+    const adminPath = path.join(publicDir, 'admin.html');
+
+    if (!fs.existsSync(adminPath)) {
+        return res.status(404).send('No se encontró public/admin.html en el servidor.');
+    }
+
+    res.sendFile(adminPath);
 });
 
 const PORT = process.env.PORT || 8040;
