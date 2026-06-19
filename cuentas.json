@@ -1,0 +1,10 @@
+[
+  {
+    "usuario": "root",
+    "contraseña": "cambiame123",
+    "rol": "admin",
+    "banned": false,
+    "fotoPerfil": null,
+    "descripcion": "Cuenta principal de administración"
+  }
+]

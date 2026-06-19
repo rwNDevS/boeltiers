@@ -1,0 +1,20 @@
+{
+  "name": "mc-tierlist",
+  "version": "1.0.0",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Backend de un Tierlist de PvP de Minecraft (Sword, NethPot, UHC) con regiones, sistema de cuentas y asignación de tiers por administradores.",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}
