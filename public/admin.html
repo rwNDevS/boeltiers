@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BOEL Tierlist | Admin</title>
+
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-soft: #0a0a0a;
+      --panel: #0d0f12;
+      --panel-2: #12151b;
+      --panel-3: #0f1722;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(214, 182, 69, 0.22);
+
+      --text: #f4f6f9;
+      --muted: #adb4bf;
+      --gold: #d6b645;
+      --gold-soft: #8d7423;
+      --blue-dark: #132033;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+
+      --success: #8bcf8b;
+      --danger: #ff8080;
+      --warning: #e8c46a;
+
+      --lt1: #7d6616;
+      --ht1: #d9ba4a;
+
+      --lt2: #6c7280;
+      --ht2: #d3d9e2;
+
+      --lt3: #6f4525;
+      --ht3: #b67a45;
+
+      --lt4: #5a4277;
+      --ht4: #9b7fd4;
+
+      --lt5: #2d6b3a;
+      --ht5: #62c678;
+
+      --gt1: #d6b645;
+      --gt2: #b79231;
+      --gt3: #9a7822;
+      --gt4: #6e5418;
+      --gt5: #70757d;
+
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+      --max-width: 1280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, system-ui, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #030303 0%, #07090d 45%, #040404 100%);
+      color: var(--text);
+      padding: 24px;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      background: linear-gradient(180deg, #0b0d10 0%, #090b0e 100%);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      padding: 18px 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .brand-logo-box {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      background: #080808;
+      border: 1px solid rgba(214, 182, 69, 0.28);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-logo {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-kicker {
+      display: block;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 11px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .brand-text h1 {
+      font-size: clamp(24px, 4vw, 42px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      margin-bottom: 6px;
+      color: white;
+    }
+
+    .brand-text p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      max-width: 760px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+
+    a,
+    button {
+      text-decoration: none;
+      border: none;
+      outline: none;
+    }
+
+    .btn {
+      background: linear-gradient(180deg, #d6b645 0%, #a88424 100%);
+      color: #111;
+      border: 1px solid rgba(214, 182, 69, 0.55);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-weight: 1000;
+      cursor: pointer;
+      transition: 0.15s ease;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      filter: none;
+    }
+
+    .btn-secondary {
+      background: #0c1118;
+      color: white;
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {
+      background: #3a1116;
+      color: white;
+      border: 1px solid rgba(255, 128, 128, 0.25);
+    }
+
+    .btn-danger:hover {
+      background: #551a21;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .card {
+      background: linear-gradient(180deg, #0b0d10 0%, #10151d 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      background: #0b1018;
+    }
+
+    .card-header h2 {
+      color: white;
+      font-size: 18px;
+      line-height: 1.1;
+      margin-bottom: 5px;
+    }
+
+    .card-header p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .card-body {
+      padding: 18px;
+    }
+
+    .panel-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      background: #0b1018;
+      border: 1px solid var(--border);
+      color: white;
+      border-radius: 12px;
+      padding: 12px 13px;
+      font-size: 14px;
+      outline: none;
+      transition: 0.15s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(214, 182, 69, 0.35);
+      box-shadow: 0 0 0 3px rgba(214, 182, 69, 0.07);
+    }
+
+    select option {
+      background: #0b1018;
+      color: white;
+    }
+
+    .session-box {
+      margin-top: 14px;
+      background: #0b1018;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .session-box strong {
+      color: white;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      margin-top: 12px;
+      padding: 12px 13px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+      background: #0b1018;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .message.ok {
+      color: #d9ffe1;
+      background: rgba(139, 207, 139, 0.08);
+      border-color: rgba(139, 207, 139, 0.25);
+    }
+
+    .message.error {
+      color: #ffdede;
+      background: rgba(255, 128, 128, 0.08);
+      border-color: rgba(255, 128, 128, 0.25);
+    }
+
+    .message.warn {
+      color: #fff2c4;
+      background: rgba(232, 196, 106, 0.08);
+      border-color: rgba(232, 196, 106, 0.25);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 160px 150px;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .stat-card {
+      background: #0b1018;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .stat-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .stat-card strong {
+      display: block;
+      color: white;
+      font-size: 22px;
+    }
+
+    .players {
+      display: grid;
+      gap: 12px;
+    }
+
+    .player-card {
+      background: #0b0f15;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 14px;
+    }
+
+    .player-card:hover {
+      background: rgba(19, 32, 51, 0.28);
+    }
+
+    .player-head {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      object-fit: cover;
+      image-rendering: pixelated;
+      border: 1px solid var(--border);
+      background: #0b1018;
+    }
+
+    .player-main {
+      min-width: 0;
+    }
+
+    .player-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .player-name {
+      color: white;
+      font-size: 18px;
+      font-weight: 1000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+      word-break: break-word;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      background: #0b1018;
+      border: 1px solid var(--border);
+      color: #d4d9e0;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tier-badge {
+      color: white;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 1000;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .tier-lt1 { background: var(--lt1); }
+    .tier-ht1 { background: var(--ht1); color: #101010; }
+
+    .tier-lt2 { background: var(--lt2); }
+    .tier-ht2 { background: var(--ht2); color: #101010; }
+
+    .tier-lt3 { background: var(--lt3); }
+    .tier-ht3 { background: var(--ht3); color: #101010; }
+
+    .tier-lt4 { background: var(--lt4); }
+    .tier-ht4 { background: var(--ht4); color: #101010; }
+
+    .tier-lt5 { background: var(--lt5); }
+    .tier-ht5 { background: var(--ht5); color: #101010; }
+
+    .general-tier-1 { background: var(--gt1); color: #101010; }
+    .general-tier-2 { background: var(--gt2); color: #111; }
+    .general-tier-3 { background: var(--gt3); color: #fff; }
+    .general-tier-4 { background: var(--gt4); color: #fff; }
+    .general-tier-5 { background: var(--gt5); color: #fff; }
+
+    .tier-empty {
+      background: #3f4650;
+      color: white;
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 120px repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .editor-grid select {
+      padding: 10px 11px;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+
+    .points-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+    }
+
+    .row-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .empty {
+      padding: 30px 20px;
+      text-align: center;
+      color: var(--muted);
+      background: #0b1018;
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+    }
+
+    .loading {
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 1050px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar,
+      .stats,
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 16px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+      }
+
+      .player-card {
+        grid-template-columns: 1fr;
+      }
+
+      .player-top {
+        flex-direction: column;
+      }
+
+      .chips,
+      .row-actions {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <section class="topbar">
+      <div class="brand">
+        <div class="brand-logo-box">
+          <img src="/boel.png" alt="Logo BOEL" class="brand-logo" />
+        </div>
+
+        <div class="brand-text">
+          <span class="brand-kicker">Brigada 00.EE. • Lautaro</span>
+          <h1>Panel Administrativo</h1>
+          <p>
+            Gestión de jugadores, regiones y tiers del sistema competitivo BOEL.
+          </p>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <a class="btn btn-secondary" href="/">Ver ranking</a>
+        <button id="reloadBtn" class="btn btn-secondary" type="button">Recargar</button>
+      </div>
+    </section>
+
+    <section class="layout">
+      <aside class="panel-stack">
+        <article class="card">
+          <div class="card-header">
+            <h2>Iniciar sesión</h2>
+            <p>Usa una cuenta con rol administrador.</p>
+          </div>
+
+          <div class="card-body">
+            <form id="loginForm" class="form">
+              <div class="field">
+                <label for="loginUser">Usuario</label>
+                <input id="loginUser" type="text" placeholder="root" autocomplete="username" required />
+              </div>
+
+              <div class="field">
+                <label for="loginPass">Contraseña</label>
+                <input id="loginPass" type="password" placeholder="Contraseña" autocomplete="current-password" required />
+              </div>
+
+              <button class="btn" type="submit">Entrar</button>
+            </form>
+
+            <div id="sessionBox" class="session-box hidden"></div>
+            <div id="loginMsg"></div>
+          </div>
+        </article>
+
+        <article id="createPlayerCard" class="card hidden">
+          <div class="card-header">
+            <h2>Registrar jugador</h2>
+            <p>Se guardará directamente en el sistema del backend.</p>
+          </div>
+
+          <div class="card-body">
+            <form id="createPlayerForm" class="form">
+              <div class="field">
+                <label for="mcUsername">Usuario de Minecraft</label>
+                <input id="mcUsername" type="text" placeholder="Ej. wKoraii" maxlength="16" required />
+              </div>
+
+              <div class="field">
+                <label for="mcRegion">Región inicial</label>
+                <select id="mcRegion" required>
+                  <option value="NA">NA</option>
+                  <option value="SA">SA</option>
+                  <option value="EU">EU</option>
+                </select>
+              </div>
+
+              <button class="btn" type="submit">Registrar jugador</button>
+            </form>
+
+            <div id="createMsg"></div>
+          </div>
+        </article>
+      </aside>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Jugadores registrados</h2>
+          <p>Edita región, Sword, NethPot y UHC. Luego guarda los cambios.</p>
+        </div>
+
+        <div class="card-body">
+          <section class="toolbar">
+            <input id="searchInput" type="text" placeholder="Buscar jugador..." />
+
+            <select id="regionFilter">
+              <option value="">Todas</option>
+              <option value="NA">NA</option>
+              <option value="SA">SA</option>
+              <option value="EU">EU</option>
+            </select>
+
+            <select id="sortSelect">
+              <option value="points">Más puntos</option>
+              <option value="name">Nombre A-Z</option>
+              <option value="region">Región</option>
+            </select>
+          </section>
+
+          <section class="stats">
+            <article class="stat-card">
+              <span>Total</span>
+              <strong id="statTotal">0</strong>
+            </article>
+
+            <article class="stat-card">
+              <span>Mostrados</span>
+              <strong id="statShown">0</strong>
+            </article>
+
+            <article class="stat-card">
+              <span>Estado</span>
+              <strong id="statStatus">—</strong>
+            </article>
+          </section>
+
+          <div id="globalMsg"></div>
+          <section id="playersList" class="players"></section>
+        </div>
+      </section>
+    </section>
+
+    <p class="footer-note">
+      BOEL Tierlist · Panel conectado al backend del sistema.
+    </p>
+  </main>
+
+  <script>
+    const API_BASE = "/api";
+
+    const state = {
+      auth: null,
+      config: null,
+      players: [],
+      search: "",
+      region: "",
+      sort: "points"
+    };
+
+    const els = {
+      loginForm: document.getElementById("loginForm"),
+      loginUser: document.getElementById("loginUser"),
+      loginPass: document.getElementById("loginPass"),
+      loginMsg: document.getElementById("loginMsg"),
+      sessionBox: document.getElementById("sessionBox"),
+
+      createPlayerCard: document.getElementById("createPlayerCard"),
+      createPlayerForm: document.getElementById("createPlayerForm"),
+      mcUsername: document.getElementById("mcUsername"),
+      mcRegion: document.getElementById("mcRegion"),
+      createMsg: document.getElementById("createMsg"),
+
+      searchInput: document.getElementById("searchInput"),
+      regionFilter: document.getElementById("regionFilter"),
+      sortSelect: document.getElementById("sortSelect"),
+      reloadBtn: document.getElementById("reloadBtn"),
+
+      statTotal: document.getElementById("statTotal"),
+      statShown: document.getElementById("statShown"),
+      statStatus: document.getElementById("statStatus"),
+
+      globalMsg: document.getElementById("globalMsg"),
+      playersList: document.getElementById("playersList")
+    };
+
+    function authHeaders() {
+      if (!state.auth) return { "Content-Type": "application/json" };
+
+      return {
+        "Content-Type": "application/json",
+        "x-admin-usuario": state.auth.usuario,
+        "x-admin-password": state.auth.password
+      };
+    }
+
+    async function fetchJSON(url, options = {}) {
+      const response = await fetch(url, options);
+      const text = await response.text();
+
+      let data = null;
+
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        data = { error: text };
+      }
+
+      if (!response.ok) {
+        throw new Error(data?.error || data?.message || `Error HTTP ${response.status}`);
+      }
+
+      return data;
+    }
+
+    function setLoading(value) {
+      document.body.classList.toggle("loading", value);
+    }
+
+    function setMsg(element, type, text) {
+      if (!text) {
+        element.innerHTML = "";
+        return;
+      }
+
+      element.innerHTML = `<div class="message ${type}">${escapeHTML(text)}</div>`;
+    }
+
+    function isAdmin() {
+      return state.auth && state.auth.rol === "admin";
+    }
+
+    async function loadConfig() {
+      state.config = await fetchJSON(`${API_BASE}/config`);
+    }
+
+    async function loadPlayers() {
+      try {
+        setLoading(true);
+
+        const regionQuery = state.region ? `?region=${encodeURIComponent(state.region)}` : "";
+        state.players = await fetchJSON(`${API_BASE}/players${regionQuery}`);
+
+        els.statStatus.textContent = "Online";
+        setMsg(els.globalMsg, "", "");
+
+        renderPlayers();
+      } catch (error) {
+        els.statStatus.textContent = "Error";
+        setMsg(els.globalMsg, "error", `No se pudieron cargar los jugadores: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function login(username, password) {
+      const account = await fetchJSON(`${API_BASE}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      state.auth = {
+        usuario: account.usuario,
+        rol: account.rol,
+        fotoPerfil: account.fotoPerfil,
+        descripcion: account.descripcion,
+        password
+      };
+
+      renderSession();
+
+      if (!isAdmin()) {
+        setMsg(els.loginMsg, "warn", "Sesión iniciada, pero esta cuenta no tiene rol admin.");
+        return;
+      }
+
+      setMsg(els.loginMsg, "ok", "Sesión admin iniciada correctamente.");
+    }
+
+    function logout() {
+      state.auth = null;
+      els.loginPass.value = "";
+      renderSession();
+      renderPlayers();
+      setMsg(els.loginMsg, "warn", "Sesión cerrada.");
+    }
+
+    function renderSession() {
+      if (!state.auth) {
+        els.sessionBox.classList.add("hidden");
+        els.sessionBox.innerHTML = "";
+        els.createPlayerCard.classList.add("hidden");
+        return;
+      }
+
+      els.sessionBox.classList.remove("hidden");
+      els.sessionBox.innerHTML = `
+        <strong>Sesión activa:</strong> ${escapeHTML(state.auth.usuario)}<br>
+        <strong>Rol:</strong> ${escapeHTML(state.auth.rol)}<br><br>
+        <button class="btn btn-secondary" type="button" onclick="logout()">Cerrar sesión</button>
+      `;
+
+      if (isAdmin()) {
+        els.createPlayerCard.classList.remove("hidden");
+      } else {
+        els.createPlayerCard.classList.add("hidden");
+      }
+    }
+
+    async function createPlayer(username, region) {
+      if (!isAdmin()) {
+        throw new Error("Necesitas iniciar sesión como admin.");
+      }
+
+      return fetchJSON(`${API_BASE}/players`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({ username, region })
+      });
+    }
+
+    async function updatePlayerRegion(player, region) {
+      if (!isAdmin()) {
+        throw new Error("Necesitas iniciar sesión como admin.");
+      }
+
+      return fetchJSON(`${API_BASE}/players/${player.id}`, {
+        method: "PATCH",
+        headers: authHeaders(),
+        body: JSON.stringify({ region })
+      });
+    }
+
+    async function updatePlayerTier(player, gamemode, tier) {
+      if (!isAdmin()) {
+        throw new Error("Necesitas iniciar sesión como admin.");
+      }
+
+      return fetchJSON(`${API_BASE}/players/${player.id}/tier`, {
+        method: "PATCH",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          gamemode,
+          tier: tier || null
+        })
+      });
+    }
+
+    async function deletePlayer(player) {
+      if (!isAdmin()) {
+        throw new Error("Necesitas iniciar sesión como admin.");
+      }
+
+      return fetchJSON(`${API_BASE}/players/${player.id}`, {
+        method: "DELETE",
+        headers: authHeaders()
+      });
+    }
+
+    function getFilteredPlayers() {
+      const query = state.search.trim().toLowerCase();
+      let list = [...state.players];
+
+      if (query) {
+        list = list.filter(player =>
+          String(player.username || "").toLowerCase().includes(query)
+        );
+      }
+
+      if (state.sort === "points") {
+        list.sort((a, b) =>
+          (b.puntos?.total || 0) - (a.puntos?.total || 0) ||
+          String(a.username).localeCompare(String(b.username))
+        );
+      }
+
+      if (state.sort === "name") {
+        list.sort((a, b) => String(a.username).localeCompare(String(b.username)));
+      }
+
+      if (state.sort === "region") {
+        list.sort((a, b) =>
+          String(a.region).localeCompare(String(b.region)) ||
+          String(a.username).localeCompare(String(b.username))
+        );
+      }
+
+      return list;
+    }
+
+    function renderPlayers() {
+      const list = getFilteredPlayers();
+
+      els.statTotal.textContent = state.players.length;
+      els.statShown.textContent = list.length;
+
+      if (list.length === 0) {
+        els.playersList.innerHTML = `
+          <div class="empty">
+            No hay jugadores registrados o no coinciden con el filtro.
+          </div>
+        `;
+        return;
+      }
+
+      els.playersList.innerHTML = list.map(player => renderPlayerCard(player)).join("");
+    }
+
+    function renderPlayerCard(player) {
+      const points = player.puntos || {};
+      const tiers = player.tiers || {};
+      const tierGeneral = player.tierGeneral || "Tier 5";
+
+      return `
+        <article class="player-card" data-player-id="${escapeHTML(player.id)}">
+          <img
+            class="player-head"
+            src="${getHeadUrl(player)}"
+            alt="Skin de ${escapeHTML(player.username)}"
+            onerror="this.src='https://mc-heads.net/avatar/Steve/160'"
+          />
+
+          <div class="player-main">
+            <div class="player-top">
+              <div>
+                <div class="player-name">${escapeHTML(player.username)}</div>
+                <div class="player-sub">
+                  ID: ${escapeHTML(player.id)} · UUID: ${escapeHTML(player.uuid || "sin confirmar")}
+                </div>
+              </div>
+
+              <div class="chips">
+                <span class="chip">${escapeHTML(player.region || "—")}</span>
+                <span class="tier-badge ${getTierClass(tierGeneral, true)}">${escapeHTML(tierGeneral)}</span>
+                <span class="chip">${points.total || 0} pts</span>
+              </div>
+            </div>
+
+            <div class="editor-grid">
+              ${renderRegionSelect(player.id, player.region)}
+              ${renderTierSelect(player.id, "sword", "Sword", tiers.sword)}
+              ${renderTierSelect(player.id, "nethpot", "NethPot", tiers.nethpot)}
+              ${renderTierSelect(player.id, "uhc", "UHC", tiers.uhc)}
+            </div>
+
+            <div class="points-row">
+              <span class="chip">Sword: ${points.sword || 0} pts</span>
+              <span class="chip">NethPot: ${points.nethpot || 0} pts</span>
+              <span class="chip">UHC: ${points.uhc || 0} pts</span>
+            </div>
+
+            <div class="row-actions">
+              <button
+                class="btn"
+                type="button"
+                onclick="handleSavePlayer('${escapeJS(player.id)}')"
+                ${isAdmin() ? "" : "disabled"}
+              >
+                Guardar cambios
+              </button>
+
+              <button
+                class="btn btn-danger"
+                type="button"
+                onclick="handleDeletePlayer('${escapeJS(player.id)}')"
+                ${isAdmin() ? "" : "disabled"}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderRegionSelect(playerId, selectedRegion) {
+      const regiones = state.config?.regiones || ["NA", "SA", "EU"];
+
+      return `
+        <div class="field">
+          <label>Región</label>
+          <select
+            data-player-id="${escapeHTML(playerId)}"
+            data-region-select="true"
+            ${isAdmin() ? "" : "disabled"}
+          >
+            ${regiones.map(region => `
+              <option value="${region}" ${selectedRegion === region ? "selected" : ""}>
+                ${region}
+              </option>
+            `).join("")}
+          </select>
+        </div>
+      `;
+    }
+
+    function renderTierSelect(playerId, mode, label, selectedTier) {
+      const tiers = state.config?.tiersOrden || ["HT1", "LT1", "HT2", "LT2", "HT3", "LT3", "HT4", "LT4", "HT5", "LT5"];
+
+      return `
+        <div class="field">
+          <label>${label}</label>
+          <select
+            data-player-id="${escapeHTML(playerId)}"
+            data-tier-mode="${mode}"
+            ${isAdmin() ? "" : "disabled"}
+          >
+            <option value="">Sin tier</option>
+            ${tiers.map(tier => `
+              <option value="${tier}" ${selectedTier === tier ? "selected" : ""}>
+                ${tier}
+              </option>
+            `).join("")}
+          </select>
+        </div>
+      `;
+    }
+
+    async function handleSavePlayer(playerId) {
+      const player = state.players.find(p => p.id === playerId);
+      if (!player) return;
+
+      const card = document.querySelector(`[data-player-id="${CSS.escape(playerId)}"]`);
+      const regionSelect = card.querySelector("select[data-region-select]");
+      const tierSelects = card.querySelectorAll("select[data-tier-mode]");
+
+      const newRegion = regionSelect.value;
+      const newTiers = {};
+
+      tierSelects.forEach(select => {
+        newTiers[select.dataset.tierMode] = select.value || null;
+      });
+
+      const changes = [];
+
+      try {
+        setLoading(true);
+
+        if ((player.region || "") !== newRegion) {
+          await updatePlayerRegion(player, newRegion);
+          changes.push("región");
+        }
+
+        for (const mode of ["sword", "nethpot", "uhc"]) {
+          const oldTier = player.tiers?.[mode] || null;
+          const newTier = newTiers[mode] || null;
+
+          if (oldTier !== newTier) {
+            await updatePlayerTier(player, mode, newTier);
+            changes.push(mode);
+          }
+        }
+
+        if (changes.length === 0) {
+          setMsg(els.globalMsg, "warn", "No hiciste ningún cambio.");
+          return;
+        }
+
+        setMsg(els.globalMsg, "ok", `Cambios guardados para ${player.username}: ${changes.join(", ")}.`);
+        await loadPlayers();
+      } catch (error) {
+        setMsg(els.globalMsg, "error", error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function handleDeletePlayer(playerId) {
+      const player = state.players.find(p => p.id === playerId);
+      if (!player) return;
+
+      const ok = confirm(`¿Seguro que quieres eliminar a ${player.username}?`);
+
+      if (!ok) return;
+
+      try {
+        setLoading(true);
+
+        await deletePlayer(player);
+
+        setMsg(els.globalMsg, "ok", `${player.username} fue eliminado correctamente.`);
+        await loadPlayers();
+      } catch (error) {
+        setMsg(els.globalMsg, "error", error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function getHeadUrl(player) {
+      return player.skinHeadUrl || `https://mc-heads.net/avatar/${encodeURIComponent(player.username || "Steve")}/160`;
+    }
+
+    function getTierClass(tier, isGeneral = false) {
+      if (!tier) return "tier-empty";
+
+      const value = String(tier).toUpperCase().trim();
+
+      if (isGeneral) {
+        if (value === "TIER 1") return "general-tier-1";
+        if (value === "TIER 2") return "general-tier-2";
+        if (value === "TIER 3") return "general-tier-3";
+        if (value === "TIER 4") return "general-tier-4";
+        if (value === "TIER 5") return "general-tier-5";
+        return "tier-empty";
+      }
+
+      if (value === "LT1") return "tier-lt1";
+      if (value === "HT1") return "tier-ht1";
+      if (value === "LT2") return "tier-lt2";
+      if (value === "HT2") return "tier-ht2";
+      if (value === "LT3") return "tier-lt3";
+      if (value === "HT3") return "tier-ht3";
+      if (value === "LT4") return "tier-lt4";
+      if (value === "HT4") return "tier-ht4";
+      if (value === "LT5") return "tier-lt5";
+      if (value === "HT5") return "tier-ht5";
+
+      return "tier-empty";
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeJS(value) {
+      return String(value ?? "")
+        .replaceAll("\\", "\\\\")
+        .replaceAll("'", "\\'");
+    }
+
+    els.loginForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const username = els.loginUser.value.trim();
+      const password = els.loginPass.value;
+
+      try {
+        setLoading(true);
+        setMsg(els.loginMsg, "", "");
+
+        await login(username, password);
+        await loadPlayers();
+      } catch (error) {
+        state.auth = null;
+        renderSession();
+        setMsg(els.loginMsg, "error", error.message);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    els.createPlayerForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const username = els.mcUsername.value.trim();
+      const region = els.mcRegion.value;
+
+      if (!/^[A-Za-z0-9_]{1,16}$/.test(username)) {
+        setMsg(els.createMsg, "error", "El usuario de Minecraft debe tener de 1 a 16 caracteres y solo puede usar letras, números o guion bajo.");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setMsg(els.createMsg, "", "");
+
+        const result = await createPlayer(username, region);
+
+        els.mcUsername.value = "";
+        setMsg(els.createMsg, "ok", `Jugador registrado: ${result.jugador.username}.`);
+
+        await loadPlayers();
+      } catch (error) {
+        setMsg(els.createMsg, "error", error.message);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    els.searchInput.addEventListener("input", event => {
+      state.search = event.target.value;
+      renderPlayers();
+    });
+
+    els.regionFilter.addEventListener("change", async event => {
+      state.region = event.target.value;
+      await loadPlayers();
+    });
+
+    els.sortSelect.addEventListener("change", event => {
+      state.sort = event.target.value;
+      renderPlayers();
+    });
+
+    els.reloadBtn.addEventListener("click", async () => {
+      setMsg(els.globalMsg, "", "");
+      await loadPlayers();
+    });
+
+    async function init() {
+      try {
+        setLoading(true);
+
+        await loadConfig();
+        await loadPlayers();
+      } catch (error) {
+        els.statStatus.textContent = "Error";
+        setMsg(els.globalMsg, "error", "No se pudo conectar con el backend. Asegúrate de correr node server.js.");
+      } finally {
+        renderSession();
+        setLoading(false);
+      }
+    }
+
+    init();
+
+    window.handleSavePlayer = handleSavePlayer;
+    window.handleDeletePlayer = handleDeletePlayer;
+    window.logout = logout;
+  </script>
+</body>
+</html>
