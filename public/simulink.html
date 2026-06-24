@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BOEL Tierlist | Simulador de Tiers</title>
+
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-soft: #0a0a0a;
+      --panel: #0d0f12;
+      --panel-2: #12151b;
+      --panel-3: #0f1722;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(214, 182, 69, 0.22);
+
+      --text: #f4f6f9;
+      --muted: #adb4bf;
+      --gold: #d6b645;
+      --gold-soft: #8d7423;
+      --blue-dark: #132033;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+
+      --danger: #ff8080;
+      --success: #62c678;
+      --warning: #f0c86a;
+
+      --lt1: #7d6616;
+      --ht1: #d9ba4a;
+
+      --lt2: #6c7280;
+      --ht2: #d3d9e2;
+
+      --lt3: #6f4525;
+      --ht3: #b67a45;
+
+      --lt4: #5a4277;
+      --ht4: #9b7fd4;
+
+      --lt5: #2d6b3a;
+      --ht5: #62c678;
+
+      --gt1: #d6b645;
+      --gt2: #b79231;
+      --gt3: #9a7822;
+      --gt4: #6e5418;
+      --gt5: #70757d;
+
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+      --max-width: 1280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, system-ui, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, rgba(214, 182, 69, 0.08), transparent 34%),
+                  linear-gradient(180deg, #030303 0%, #07090d 45%, #040404 100%);
+      color: var(--text);
+      padding: 24px;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      background: linear-gradient(180deg, #0b0d10 0%, #090b0e 100%);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      padding: 18px 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .brand-logo-box {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      background: #080808;
+      border: 1px solid rgba(214, 182, 69, 0.28);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-logo {
+      width: 54px;
+      height: 54px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-kicker {
+      display: block;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 11px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .brand-text h1 {
+      font-size: clamp(24px, 4vw, 42px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      margin-bottom: 6px;
+      color: white;
+    }
+
+    .brand-text p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+      max-width: 790px;
+    }
+
+    .status-box {
+      min-width: 210px;
+      text-align: right;
+      background: #0b1018;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      flex-shrink: 0;
+    }
+
+    .status-box strong {
+      display: block;
+      font-size: 17px;
+      margin-bottom: 4px;
+      color: white;
+    }
+
+    .status-box span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 150px 140px;
+      gap: 12px;
+      padding: 14px;
+      background: linear-gradient(180deg, #0b0d10 0%, #10151d 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .search-box,
+    select,
+    button {
+      width: 100%;
+      background: #0b1018;
+      border: 1px solid var(--border);
+      color: white;
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 14px;
+      outline: none;
+      transition: 0.15s ease;
+    }
+
+    .search-box:focus,
+    select:focus {
+      border-color: rgba(214, 182, 69, 0.35);
+      box-shadow: 0 0 0 3px rgba(214, 182, 69, 0.07);
+    }
+
+    select option {
+      background: #0b1018;
+      color: white;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+    }
+
+    button:hover {
+      border-color: rgba(214, 182, 69, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-gold {
+      background: linear-gradient(180deg, #d6b645 0%, #a88424 100%);
+      color: #111;
+      border-color: rgba(214, 182, 69, 0.55);
+    }
+
+    .btn-ghost {
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 410px 1fr;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, #0b0d10 0%, #10151d 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px 18px;
+      background: #0b1018;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-header h3 {
+      font-size: 18px;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .panel-header p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .player-card {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .player-head {
+      width: 92px;
+      height: 92px;
+      border-radius: 16px;
+      object-fit: cover;
+      image-rendering: pixelated;
+      border: 1px solid var(--border);
+      background: #0b1018;
+      flex-shrink: 0;
+    }
+
+    .player-name {
+      font-size: 24px;
+      font-weight: 1000;
+      line-height: 1.05;
+      margin-bottom: 10px;
+      color: white;
+      word-break: break-word;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: #0b1018;
+      border: 1px solid var(--border);
+      color: #d4d9e0;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .chip.success {
+      color: var(--success);
+      border-color: rgba(98, 198, 120, 0.25);
+      background: rgba(98, 198, 120, 0.07);
+    }
+
+    .chip.warning {
+      color: var(--warning);
+      border-color: rgba(240, 200, 106, 0.22);
+      background: rgba(240, 200, 106, 0.07);
+    }
+
+    .chip.danger {
+      color: var(--danger);
+      border-color: rgba(255, 128, 128, 0.22);
+      background: rgba(255, 128, 128, 0.07);
+    }
+
+    .tier-badge {
+      color: white;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 1000;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 62px;
+    }
+
+    .tier-lt1 { background: var(--lt1); }
+    .tier-ht1 { background: var(--ht1); color: #101010; }
+
+    .tier-lt2 { background: var(--lt2); }
+    .tier-ht2 { background: var(--ht2); color: #101010; }
+
+    .tier-lt3 { background: var(--lt3); }
+    .tier-ht3 { background: var(--ht3); color: #101010; }
+
+    .tier-lt4 { background: var(--lt4); }
+    .tier-ht4 { background: var(--ht4); color: #101010; }
+
+    .tier-lt5 { background: var(--lt5); }
+    .tier-ht5 { background: var(--ht5); color: #101010; }
+
+    .general-tier-1 { background: var(--gt1); color: #101010; }
+    .general-tier-2 { background: var(--gt2); color: #111; }
+    .general-tier-3 { background: var(--gt3); color: #fff; }
+    .general-tier-4 { background: var(--gt4); color: #fff; }
+    .general-tier-5 { background: var(--gt5); color: #fff; }
+
+    .tier-empty {
+      background: #3f4650;
+      color: white;
+    }
+
+    .mini-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin-top: 12px;
+    }
+
+    .tier-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .tier-row {
+      display: grid;
+      grid-template-columns: 1fr 155px 82px;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      background: #0b1018;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .tier-row strong {
+      font-size: 14px;
+      color: white;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .tier-row span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: linear-gradient(180deg, #0b0d10 0%, #10151d 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      min-height: 114px;
+    }
+
+    .stat-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .stat-card strong {
+      display: block;
+      color: white;
+      font-size: 28px;
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+
+    .stat-card small {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .progress-wrap {
+      background: #0b1018;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .progress-track {
+      height: 16px;
+      background: #06080b;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #8d7423 0%, #d6b645 100%);
+      border-radius: 999px;
+      transition: 0.2s ease;
+    }
+
+    .ranges {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .range-pill {
+      background: #0b1018;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .range-pill.active {
+      border-color: rgba(214, 182, 69, 0.38);
+      background: rgba(214, 182, 69, 0.08);
+      color: white;
+    }
+
+    .range-pill strong {
+      display: block;
+      color: white;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .section-title {
+      margin: 16px 0 10px;
+    }
+
+    .section-title h3 {
+      font-size: 18px;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .table-wrap {
+      background: linear-gradient(180deg, #0b0d10 0%, #10151d 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .table-header,
+    .table-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1.1fr 115px 1fr;
+      gap: 14px;
+      align-items: center;
+      padding: 15px 18px;
+    }
+
+    .table-header {
+      background: #0b1018;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .table-row {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.14s ease;
+    }
+
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
+    .table-row:hover {
+      background: rgba(19, 32, 51, 0.34);
+    }
+
+    .combo-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .combo-card {
+      background: #0b1018;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .combo-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .combo-title {
+      font-weight: 1000;
+      color: white;
+      font-size: 14px;
+    }
+
+    .combo-sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .combo-tiers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .empty,
+    .error {
+      padding: 30px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .error strong {
+      color: var(--danger);
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .loading {
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1120px) {
+      .layout,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .ranges {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 16px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .status-box {
+        text-align: left;
+      }
+
+      .toolbar,
+      .tier-row,
+      .table-row {
+        grid-template-columns: 1fr;
+      }
+
+      .table-header {
+        display: none;
+      }
+
+      .ranges {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <section class="topbar">
+      <div class="brand">
+        <div class="brand-logo-box">
+          <img src="/boel.png" alt="Logo BOEL" class="brand-logo" onerror="this.style.display='none'" />
+        </div>
+
+        <div class="brand-text">
+          <span class="brand-kicker">Brigada 00.EE. • Lautaro</span>
+          <h1>Simulador de Tiers</h1>
+          <p>
+            Busca tu usuario, prueba posibles tiers en Sword, NethPot y UHC, y calcula cuántos puntos te faltan para llegar a cierto Tier General.
+          </p>
+        </div>
+      </div>
+
+      <div class="status-box">
+        <strong id="serverStatus">Conectando...</strong>
+        <span id="serverText">Sincronizando configuración</span>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <input
+        id="usernameInput"
+        class="search-box"
+        type="text"
+        placeholder="Escribe tu usuario de Minecraft..."
+        autocomplete="off"
+      />
+
+      <button id="searchBtn" class="btn-gold">Buscar</button>
+      <button id="resetBtn" class="btn-ghost">Limpiar</button>
+    </section>
+
+    <section class="layout">
+      <aside class="panel">
+        <div class="panel-header">
+          <h3>Jugador</h3>
+          <p>Si el usuario existe en el tierlist, se cargan sus tiers actuales. Si no existe, puedes simular manualmente.</p>
+        </div>
+
+        <div class="panel-body">
+          <div class="player-card">
+            <img id="playerHead" class="player-head" src="https://mc-heads.net/avatar/Steve/160" alt="Skin del jugador" />
+
+            <div>
+              <div id="playerName" class="player-name">Sin jugador</div>
+              <div class="meta">
+                <span id="playerRegion" class="chip">Región: —</span>
+                <span id="playerFound" class="chip warning">Modo manual</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tier-form">
+            <div class="tier-row">
+              <div>
+                <strong>Sword</strong>
+                <span id="baseSword">Base: —</span>
+              </div>
+              <select id="tierSword" data-mode="sword"></select>
+              <span id="pointsSword" class="tier-badge tier-empty">0 pts</span>
+            </div>
+
+            <div class="tier-row">
+              <div>
+                <strong>NethPot</strong>
+                <span id="baseNethpot">Base: —</span>
+              </div>
+              <select id="tierNethpot" data-mode="nethpot"></select>
+              <span id="pointsNethpot" class="tier-badge tier-empty">0 pts</span>
+            </div>
+
+            <div class="tier-row">
+              <div>
+                <strong>UHC</strong>
+                <span id="baseUhc">Base: —</span>
+              </div>
+              <select id="tierUhc" data-mode="uhc"></select>
+              <span id="pointsUhc" class="tier-badge tier-empty">0 pts</span>
+            </div>
+          </div>
+
+          <p class="mini-note">
+            El cálculo usa exactamente los puntos del backend: HT1, LT1, HT2, LT2, HT3, LT3, HT4, LT4, HT5 y LT5.
+          </p>
+        </div>
+      </aside>
+
+      <section>
+        <section class="stats">
+          <article class="stat-card">
+            <span>Total simulado</span>
+            <strong id="simTotal">0</strong>
+            <small id="simTotalText">Puntos actuales de la simulación.</small>
+          </article>
+
+          <article class="stat-card">
+            <span>Tier general</span>
+            <strong id="simGeneral">Tier 5</strong>
+            <small id="simGeneralText">Resultado según el rango de puntos.</small>
+          </article>
+
+          <article class="stat-card">
+            <span>Objetivo</span>
+            <select id="targetTier"></select>
+            <small id="targetRangeText">Selecciona un tier objetivo.</small>
+          </article>
+
+          <article class="stat-card">
+            <span>Faltante</span>
+            <strong id="missingPoints">0</strong>
+            <small id="missingText">Puntos necesarios para el objetivo.</small>
+          </article>
+        </section>
+
+        <section class="progress-wrap">
+          <div class="progress-top">
+            <span id="progressLabel">Progreso hacia Tier 5</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+
+          <div id="ranges" class="ranges"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Resumen de simulación</h3>
+            <p>Compara los tiers base contra los tiers simulados y revisa cómo cambia tu total.</p>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table-header">
+              <div>Competencia</div>
+              <div>Tier simulado</div>
+              <div>Puntos</div>
+              <div>Cambio contra base</div>
+            </div>
+            <div id="summaryTable"></div>
+          </div>
+        </section>
+
+        <div class="section-title">
+          <h3>Rutas rápidas para llegar al objetivo</h3>
+          <p>Opciones mínimas desde tus tiers simulados actuales, sin bajar ningún tier.</p>
+        </div>
+
+        <section class="panel">
+          <div class="panel-body">
+            <div id="comboList" class="combo-list"></div>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section class="toolbar">
+      <button id="copyBtn" class="btn-gold">Copiar resumen</button>
+      <button id="manualBtn" class="btn-ghost">Usar nombre manual</button>
+      <button id="baseBtn" class="btn-ghost">Volver a tiers base</button>
+    </section>
+
+    <p class="footer-note">
+      BOEL Tierlist · Simulador conectado al backend del sistema.
+    </p>
+  </main>
+
+  <script>
+    const API_BASE = "/api";
+
+    const fallbackConfig = {
+      regiones: ["NA", "SA", "EU"],
+      gamemodes: ["sword", "nethpot", "uhc"],
+      gamemodesNombre: {
+        sword: "Sword",
+        nethpot: "NethPot",
+        uhc: "UHC"
+      },
+      tiersOrden: ["HT1", "LT1", "HT2", "LT2", "HT3", "LT3", "HT4", "LT4", "HT5", "LT5"],
+      puntosPorTier: {
+        HT1: 60,
+        LT1: 48,
+        HT2: 30,
+        LT2: 20,
+        HT3: 10,
+        LT3: 6,
+        HT4: 4,
+        LT4: 3,
+        HT5: 2,
+        LT5: 1
+      },
+      rangosTierGeneral: [
+        { tier: "Tier 1", min: 106, max: 180 },
+        { tier: "Tier 2", min: 60, max: 105 },
+        { tier: "Tier 3", min: 30, max: 59 },
+        { tier: "Tier 4", min: 11, max: 29 },
+        { tier: "Tier 5", min: 0, max: 10 }
+      ]
+    };
+
+    const state = {
+      config: fallbackConfig,
+      players: [],
+      currentPlayer: null,
+      baseTiers: {
+        sword: null,
+        nethpot: null,
+        uhc: null
+      },
+      simulatedTiers: {
+        sword: null,
+        nethpot: null,
+        uhc: null
+      },
+      manualUsername: ""
+    };
+
+    const els = {
+      serverStatus: document.getElementById("serverStatus"),
+      serverText: document.getElementById("serverText"),
+      usernameInput: document.getElementById("usernameInput"),
+      searchBtn: document.getElementById("searchBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      manualBtn: document.getElementById("manualBtn"),
+      baseBtn: document.getElementById("baseBtn"),
+      copyBtn: document.getElementById("copyBtn"),
+      playerHead: document.getElementById("playerHead"),
+      playerName: document.getElementById("playerName"),
+      playerRegion: document.getElementById("playerRegion"),
+      playerFound: document.getElementById("playerFound"),
+      tierSword: document.getElementById("tierSword"),
+      tierNethpot: document.getElementById("tierNethpot"),
+      tierUhc: document.getElementById("tierUhc"),
+      baseSword: document.getElementById("baseSword"),
+      baseNethpot: document.getElementById("baseNethpot"),
+      baseUhc: document.getElementById("baseUhc"),
+      pointsSword: document.getElementById("pointsSword"),
+      pointsNethpot: document.getElementById("pointsNethpot"),
+      pointsUhc: document.getElementById("pointsUhc"),
+      simTotal: document.getElementById("simTotal"),
+      simTotalText: document.getElementById("simTotalText"),
+      simGeneral: document.getElementById("simGeneral"),
+      simGeneralText: document.getElementById("simGeneralText"),
+      targetTier: document.getElementById("targetTier"),
+      targetRangeText: document.getElementById("targetRangeText"),
+      missingPoints: document.getElementById("missingPoints"),
+      missingText: document.getElementById("missingText"),
+      progressLabel: document.getElementById("progressLabel"),
+      progressPercent: document.getElementById("progressPercent"),
+      progressBar: document.getElementById("progressBar"),
+      ranges: document.getElementById("ranges"),
+      summaryTable: document.getElementById("summaryTable"),
+      comboList: document.getElementById("comboList")
+    };
+
+    function escapeHTML(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function normalizeTier(tier) {
+      if (!tier || tier === "null" || tier === "—") return null;
+      return String(tier).toUpperCase().trim();
+    }
+
+    function pointsOf(tier) {
+      const clean = normalizeTier(tier);
+      if (!clean) return 0;
+      return state.config.puntosPorTier[clean] || 0;
+    }
+
+    function getTierClass(tier, isGeneral = false) {
+      if (!tier) return "tier-empty";
+      const value = String(tier).toUpperCase().trim();
+
+      if (isGeneral) {
+        if (value === "TIER 1") return "general-tier-1";
+        if (value === "TIER 2") return "general-tier-2";
+        if (value === "TIER 3") return "general-tier-3";
+        if (value === "TIER 4") return "general-tier-4";
+        if (value === "TIER 5") return "general-tier-5";
+        return "tier-empty";
+      }
+
+      if (value === "LT1") return "tier-lt1";
+      if (value === "HT1") return "tier-ht1";
+      if (value === "LT2") return "tier-lt2";
+      if (value === "HT2") return "tier-ht2";
+      if (value === "LT3") return "tier-lt3";
+      if (value === "HT3") return "tier-ht3";
+      if (value === "LT4") return "tier-lt4";
+      if (value === "HT4") return "tier-ht4";
+      if (value === "LT5") return "tier-lt5";
+      if (value === "HT5") return "tier-ht5";
+
+      return "tier-empty";
+    }
+
+    function totalPoints(tiers) {
+      return state.config.gamemodes.reduce((sum, mode) => sum + pointsOf(tiers[mode]), 0);
+    }
+
+    function calculateGeneralTier(total) {
+      return state.config.rangosTierGeneral.find(range => total >= range.min && total <= range.max)?.tier || "Tier 5";
+    }
+
+    function getRangeByTier(tierName) {
+      return state.config.rangosTierGeneral.find(range => range.tier === tierName) || state.config.rangosTierGeneral.at(-1);
+    }
+
+    function getBestTierMaxPoints() {
+      return state.config.rangosTierGeneral.reduce((max, range) => Math.max(max, range.max), 180);
+    }
+
+    function getDisplayName() {
+      if (state.currentPlayer?.username) return state.currentPlayer.username;
+      if (state.manualUsername) return state.manualUsername;
+      return "Steve";
+    }
+
+    function getHeadUrl(username) {
+      const clean = username || "Steve";
+      return `/api/skin-head/${encodeURIComponent(clean)}?size=160`;
+    }
+
+    async function fetchJSON(url) {
+      const response = await fetch(url);
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Error HTTP ${response.status}`);
+      }
+      return response.json();
+    }
+
+    async function loadConfig() {
+      try {
+        state.config = await fetchJSON(`${API_BASE}/config`);
+        els.serverStatus.textContent = "Online";
+        els.serverText.textContent = "Configuración cargada";
+      } catch (error) {
+        state.config = fallbackConfig;
+        els.serverStatus.textContent = "Modo local";
+        els.serverText.textContent = "Usando configuración de respaldo";
+      }
+    }
+
+    async function loadPlayers() {
+      try {
+        state.players = await fetchJSON(`${API_BASE}/players`);
+        if (els.serverStatus.textContent !== "Online") {
+          els.serverStatus.textContent = "Online";
+        }
+        els.serverText.textContent = "Backend conectado correctamente";
+      } catch (error) {
+        state.players = [];
+        if (els.serverStatus.textContent !== "Modo local") {
+          els.serverStatus.textContent = "Offline";
+          els.serverText.textContent = "No se pudo leer /api/players";
+        }
+      }
+    }
+
+    function fillTierSelects() {
+      const options = [
+        `<option value="">Sin tier</option>`,
+        ...state.config.tiersOrden.map(tier => `<option value="${tier}">${tier} · ${pointsOf(tier)} pts</option>`)
+      ].join("");
+
+      [els.tierSword, els.tierNethpot, els.tierUhc].forEach(select => {
+        select.innerHTML = options;
+      });
+    }
+
+    function fillTargetSelect() {
+      els.targetTier.innerHTML = state.config.rangosTierGeneral
+        .map(range => `<option value="${range.tier}">${range.tier}</option>`)
+        .join("");
+
+      els.targetTier.value = "Tier 3";
+    }
+
+    function setTiersInSelects(tiers) {
+      els.tierSword.value = tiers.sword || "";
+      els.tierNethpot.value = tiers.nethpot || "";
+      els.tierUhc.value = tiers.uhc || "";
+    }
+
+    function syncStateFromSelects() {
+      state.simulatedTiers = {
+        sword: normalizeTier(els.tierSword.value),
+        nethpot: normalizeTier(els.tierNethpot.value),
+        uhc: normalizeTier(els.tierUhc.value)
+      };
+    }
+
+    function searchPlayer() {
+      const query = els.usernameInput.value.trim();
+      if (!query) return;
+
+      const found = state.players.find(player =>
+        String(player.username || "").toLowerCase() === query.toLowerCase()
+      );
+
+      if (found) {
+        state.currentPlayer = found;
+        state.manualUsername = "";
+        state.baseTiers = {
+          sword: normalizeTier(found.tiers?.sword),
+          nethpot: normalizeTier(found.tiers?.nethpot),
+          uhc: normalizeTier(found.tiers?.uhc)
+        };
+        state.simulatedTiers = { ...state.baseTiers };
+        setTiersInSelects(state.simulatedTiers);
+      } else {
+        state.currentPlayer = null;
+        state.manualUsername = query;
+        state.baseTiers = { sword: null, nethpot: null, uhc: null };
+        state.simulatedTiers = { sword: null, nethpot: null, uhc: null };
+        setTiersInSelects(state.simulatedTiers);
+      }
+
+      render();
+    }
+
+    function resetAll() {
+      state.currentPlayer = null;
+      state.manualUsername = "";
+      state.baseTiers = { sword: null, nethpot: null, uhc: null };
+      state.simulatedTiers = { sword: null, nethpot: null, uhc: null };
+      els.usernameInput.value = "";
+      els.targetTier.value = "Tier 3";
+      setTiersInSelects(state.simulatedTiers);
+      render();
+    }
+
+    function useManualName() {
+      const query = els.usernameInput.value.trim();
+      if (!query) return;
+      state.currentPlayer = null;
+      state.manualUsername = query;
+      render();
+    }
+
+    function returnToBase() {
+      state.simulatedTiers = { ...state.baseTiers };
+      setTiersInSelects(state.simulatedTiers);
+      render();
+    }
+
+    function renderPlayer() {
+      const name = getDisplayName();
+      const hasRealPlayer = Boolean(state.currentPlayer);
+
+      els.playerName.textContent = hasRealPlayer || state.manualUsername ? name : "Sin jugador";
+      els.playerHead.src = getHeadUrl(name);
+      els.playerHead.onerror = () => {
+        els.playerHead.src = "https://mc-heads.net/avatar/Steve/160";
+      };
+
+      els.playerRegion.textContent = `Región: ${state.currentPlayer?.region || "—"}`;
+      els.playerFound.textContent = hasRealPlayer ? "Registrado" : "Modo manual";
+      els.playerFound.className = hasRealPlayer ? "chip success" : "chip warning";
+    }
+
+    function renderBaseLabels() {
+      els.baseSword.textContent = `Base: ${state.baseTiers.sword || "—"}`;
+      els.baseNethpot.textContent = `Base: ${state.baseTiers.nethpot || "—"}`;
+      els.baseUhc.textContent = `Base: ${state.baseTiers.uhc || "—"}`;
+    }
+
+    function renderModePoints() {
+      const modeToElement = {
+        sword: els.pointsSword,
+        nethpot: els.pointsNethpot,
+        uhc: els.pointsUhc
+      };
+
+      Object.entries(modeToElement).forEach(([mode, element]) => {
+        const tier = state.simulatedTiers[mode];
+        element.textContent = `${pointsOf(tier)} pts`;
+        element.className = `tier-badge ${getTierClass(tier)}`;
+      });
+    }
+
+    function renderRanges(currentGeneral) {
+      const reversedRanges = [...state.config.rangosTierGeneral].reverse();
+
+      els.ranges.innerHTML = reversedRanges.map(range => `
+        <div class="range-pill ${range.tier === currentGeneral ? "active" : ""}">
+          <strong>${escapeHTML(range.tier)}</strong>
+          ${range.min} - ${range.max} pts
+        </div>
+      `).join("");
+    }
+
+    function renderStats() {
+      const total = totalPoints(state.simulatedTiers);
+      const baseTotal = totalPoints(state.baseTiers);
+      const general = calculateGeneralTier(total);
+      const target = getRangeByTier(els.targetTier.value);
+      const missing = Math.max(0, target.min - total);
+      const maxPoints = getBestTierMaxPoints();
+      const percent = Math.max(0, Math.min(100, Math.round((total / maxPoints) * 100)));
+
+      els.simTotal.textContent = total;
+      els.simTotalText.textContent = total === baseTotal
+        ? "Sin cambios contra la base."
+        : `${total > baseTotal ? "+" : ""}${total - baseTotal} pts contra la base.`;
+
+      els.simGeneral.textContent = general;
+      els.simGeneral.className = "";
+      els.simGeneralText.innerHTML = `<span class="tier-badge ${getTierClass(general, true)}">${general}</span>`;
+
+      els.targetRangeText.textContent = `${target.tier}: mínimo ${target.min} pts, máximo ${target.max} pts.`;
+      els.missingPoints.textContent = missing;
+      els.missingText.textContent = missing === 0
+        ? `Ya alcanzas ${target.tier}.`
+        : `Te faltan ${missing} pts para ${target.tier}.`;
+
+      els.progressLabel.textContent = `Progreso total del sistema`;
+      els.progressPercent.textContent = `${percent}%`;
+      els.progressBar.style.width = `${percent}%`;
+
+      renderRanges(general);
+    }
+
+    function renderSummaryTable() {
+      const modeNames = state.config.gamemodesNombre;
+
+      els.summaryTable.innerHTML = state.config.gamemodes.map(mode => {
+        const baseTier = state.baseTiers[mode];
+        const simTier = state.simulatedTiers[mode];
+        const basePoints = pointsOf(baseTier);
+        const simPoints = pointsOf(simTier);
+        const diff = simPoints - basePoints;
+        const diffText = diff === 0 ? "Sin cambio" : `${diff > 0 ? "+" : ""}${diff} pts`;
+        const diffClass = diff > 0 ? "success" : diff < 0 ? "danger" : "";
+
+        return `
+          <article class="table-row">
+            <div>
+              <strong>${escapeHTML(modeNames[mode] || mode)}</strong><br>
+              <span class="chip">Base: ${escapeHTML(baseTier || "—")}</span>
+            </div>
+            <div>
+              <span class="tier-badge ${getTierClass(simTier)}">${escapeHTML(simTier || "—")}</span>
+            </div>
+            <div><strong>${simPoints}</strong> pts</div>
+            <div><span class="chip ${diffClass}">${diffText}</span></div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function getUpgradeCombos(targetTier) {
+      const target = getRangeByTier(targetTier);
+      const modes = state.config.gamemodes;
+      const possibleTiers = [null, ...state.config.tiersOrden];
+      const current = { ...state.simulatedTiers };
+      const currentTotal = totalPoints(current);
+
+      if (currentTotal >= target.min) return [];
+
+      const combos = [];
+
+      for (const sword of possibleTiers) {
+        for (const nethpot of possibleTiers) {
+          for (const uhc of possibleTiers) {
+            const combo = { sword, nethpot, uhc };
+
+            const neverDowngrades = modes.every(mode => pointsOf(combo[mode]) >= pointsOf(current[mode]));
+            if (!neverDowngrades) continue;
+
+            const total = totalPoints(combo);
+            if (total < target.min) continue;
+
+            const changes = modes.filter(mode => normalizeTier(combo[mode]) !== normalizeTier(current[mode]));
+            if (changes.length === 0) continue;
+
+            combos.push({
+              tiers: combo,
+              total,
+              added: total - currentTotal,
+              changes
+            });
+          }
+        }
+      }
+
+      combos.sort((a, b) =>
+        a.added - b.added ||
+        a.changes.length - b.changes.length ||
+        b.total - a.total
+      );
+
+      return combos.slice(0, 5);
+    }
+
+    function renderCombos() {
+      const targetTier = els.targetTier.value;
+      const target = getRangeByTier(targetTier);
+      const total = totalPoints(state.simulatedTiers);
+      const combos = getUpgradeCombos(targetTier);
+      const modeNames = state.config.gamemodesNombre;
+
+      if (total >= target.min) {
+        els.comboList.innerHTML = `
+          <div class="empty">
+            Ya alcanzas <b>${escapeHTML(targetTier)}</b> con ${total} pts. Puedes subir más tiers para mejorar posición, pero no necesitas puntos extra para este objetivo.
+          </div>
+        `;
+        return;
+      }
+
+      if (combos.length === 0) {
+        els.comboList.innerHTML = `
+          <div class="empty">
+            No hay una ruta posible con solo mejoras desde la simulación actual.
+          </div>
+        `;
+        return;
+      }
+
+      els.comboList.innerHTML = combos.map((combo, index) => {
+        const tierChips = state.config.gamemodes.map(mode => {
+          const tier = combo.tiers[mode];
+          const changed = combo.changes.includes(mode);
+          return `
+            <span class="chip ${changed ? "success" : ""}">
+              ${escapeHTML(modeNames[mode] || mode)}: ${escapeHTML(tier || "—")} · ${pointsOf(tier)} pts
+            </span>
+          `;
+        }).join("");
+
+        return `
+          <article class="combo-card">
+            <div class="combo-top">
+              <div>
+                <div class="combo-title">Ruta #${index + 1}: +${combo.added} pts</div>
+                <div class="combo-sub">Terminas con ${combo.total} pts y ${calculateGeneralTier(combo.total)}.</div>
+              </div>
+              <span class="tier-badge ${getTierClass(calculateGeneralTier(combo.total), true)}">${calculateGeneralTier(combo.total)}</span>
+            </div>
+            <div class="combo-tiers">${tierChips}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function buildSummaryText() {
+      const name = state.currentPlayer?.username || state.manualUsername || "Sin jugador";
+      const total = totalPoints(state.simulatedTiers);
+      const general = calculateGeneralTier(total);
+      const target = getRangeByTier(els.targetTier.value);
+      const missing = Math.max(0, target.min - total);
+      const modeNames = state.config.gamemodesNombre;
+
+      const lines = [
+        `Simulación de tiers - ${name}`,
+        `Total: ${total} pts`,
+        `Tier general: ${general}`,
+        `Objetivo: ${target.tier} (${target.min}-${target.max} pts)`,
+        missing === 0 ? `Estado: ya alcanza ${target.tier}` : `Faltan: ${missing} pts`,
+        "",
+        "Tiers simulados:"
+      ];
+
+      state.config.gamemodes.forEach(mode => {
+        const tier = state.simulatedTiers[mode] || "—";
+        lines.push(`- ${modeNames[mode] || mode}: ${tier} (${pointsOf(tier)} pts)`);
+      });
+
+      return lines.join("\n");
+    }
+
+    async function copySummary() {
+      const text = buildSummaryText();
+      try {
+        await navigator.clipboard.writeText(text);
+        els.copyBtn.textContent = "Copiado";
+        setTimeout(() => els.copyBtn.textContent = "Copiar resumen", 1200);
+      } catch {
+        alert(text);
+      }
+    }
+
+    function render() {
+      syncStateFromSelects();
+      renderPlayer();
+      renderBaseLabels();
+      renderModePoints();
+      renderStats();
+      renderSummaryTable();
+      renderCombos();
+    }
+
+    [els.tierSword, els.tierNethpot, els.tierUhc, els.targetTier].forEach(element => {
+      element.addEventListener("change", render);
+    });
+
+    els.searchBtn.addEventListener("click", searchPlayer);
+    els.resetBtn.addEventListener("click", resetAll);
+    els.manualBtn.addEventListener("click", useManualName);
+    els.baseBtn.addEventListener("click", returnToBase);
+    els.copyBtn.addEventListener("click", copySummary);
+
+    els.usernameInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") searchPlayer();
+    });
+
+    async function init() {
+      document.body.classList.add("loading");
+      await loadConfig();
+      fillTierSelects();
+      fillTargetSelect();
+      setTiersInSelects(state.simulatedTiers);
+      await loadPlayers();
+      render();
+      document.body.classList.remove("loading");
+    }
+
+    init();
+  </script>
+</body>
+</html>

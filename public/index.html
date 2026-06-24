@@ -139,14 +139,21 @@
       max-width: 760px;
     }
 
-    .status-box {
+    .top-actions {
       min-width: 190px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .status-box {
+      width: 100%;
       text-align: right;
       background: #0b1018;
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px 14px;
-      flex-shrink: 0;
     }
 
     .status-box strong {
@@ -159,6 +166,29 @@
     .status-box span {
       color: var(--muted);
       font-size: 13px;
+    }
+
+    .simulator-link {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      background: linear-gradient(180deg, #d6b645 0%, #a88424 100%);
+      color: #111;
+      border: 1px solid rgba(214, 182, 69, 0.55);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-weight: 1000;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+      transition: 0.15s ease;
+    }
+
+    .simulator-link:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
     }
 
     .toolbar {
@@ -531,6 +561,11 @@
         align-items: stretch;
       }
 
+      .top-actions {
+        width: 100%;
+        min-width: 0;
+      }
+
       .status-box {
         text-align: left;
       }
@@ -576,9 +611,15 @@
         </div>
       </div>
 
-      <div class="status-box">
-        <strong id="serverStatus">Conectando...</strong>
-        <span id="serverText">Sincronizando con el backend</span>
+      <div class="top-actions">
+        <div class="status-box">
+          <strong id="serverStatus">Conectando...</strong>
+          <span id="serverText">Sincronizando con el backend</span>
+        </div>
+
+        <a class="simulator-link" href="/simulink.html">
+          SIMULINK
+        </a>
       </div>
     </section>
 
