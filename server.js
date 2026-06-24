@@ -85,8 +85,8 @@ const PUNTOS_POR_TIER = {
 const RANGOS_TIER_GENERAL = [
     { tier: 'Tier 1', min: 106, max: 180 },
     { tier: 'Tier 2', min: 60, max: 105 },
-    { tier: 'Tier 3', min: 31, max: 59 },
-    { tier: 'Tier 4', min: 11, max: 30 },
+    { tier: 'Tier 3', min: 30, max: 59 },
+    { tier: 'Tier 4', min: 11, max: 29},
     { tier: 'Tier 5', min: 0, max: 10 }
 ];
 
